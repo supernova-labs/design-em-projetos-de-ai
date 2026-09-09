@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   CAMADA 1 · TOKENS
+
+   Três níveis. O componente só usa o do meio (semântico).
+   O lint barra o uso do nível base direto em componente.
+
+   O dark mode é a prova de que a camada funciona: ele redefine
+   só o nível semântico. Nenhum componente muda uma linha.
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  /* ── base ── a paleta crua. Ninguém usa direto. ── */
+  --color-neutral-0: oklch(1 0 0);
+  --color-neutral-25: oklch(0.99 0.002 260);
+  --color-neutral-50: oklch(0.975 0.003 260);
+  --color-neutral-100: oklch(0.955 0.004 260);
+  --color-neutral-200: oklch(0.91 0.005 260);
+  --color-neutral-300: oklch(0.85 0.006 260);
+  --color-neutral-400: oklch(0.7 0.008 260);
+  --color-neutral-500: oklch(0.58 0.01 260);
+  --color-neutral-600: oklch(0.48 0.012 260);
+  --color-neutral-700: oklch(0.36 0.012 260);
+  --color-neutral-800: oklch(0.26 0.012 260);
+  --color-neutral-850: oklch(0.22 0.012 260);
+  --color-neutral-900: oklch(0.18 0.012 260);
+  --color-neutral-950: oklch(0.145 0.012 260);
+
+  --color-indigo-400: oklch(0.72 0.15 264);
+  --color-indigo-500: oklch(0.62 0.19 264);
+  --color-indigo-600: oklch(0.55 0.21 264);
+  --color-indigo-950: oklch(0.28 0.09 264);
+
+  --color-emerald-400: oklch(0.78 0.15 162);
+  --color-emerald-600: oklch(0.6 0.14 162);
+  --color-emerald-950: oklch(0.29 0.06 162);
+
+  --color-amber-400: oklch(0.83 0.15 78);
+  --color-amber-600: oklch(0.68 0.15 68);
+  --color-amber-950: oklch(0.3 0.07 68);
+
+  --color-rose-400: oklch(0.75 0.16 18);
+  --color-rose-600: oklch(0.58 0.21 18);
+  --color-rose-950: oklch(0.28 0.09 18);
+
+  --color-violet-400: oklch(0.74 0.14 300);
+  --color-violet-600: oklch(0.56 0.2 300);
+  --color-violet-950: oklch(0.28 0.09 300);
+
+  --color-sky-400: oklch(0.78 0.12 235);
+  --color-sky-600: oklch(0.6 0.15 235);
+  --color-sky-950: oklch(0.29 0.07 235);
+
+  /* ── semântico ── o que o agente usa. Tema claro. ── */
+  --color-bg: var(--color-neutral-25);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-hover: var(--color-neutral-50);
+  --color-fg: var(--color-neutral-800);
+  --color-muted: var(--color-neutral-500);
+  --color-border: var(--color-neutral-100);
+  --color-border-strong: var(--color-neutral-200);
+
+  --color-primary: var(--color-indigo-600);
+  --color-primary-hover: var(--color-indigo-500);
+  --color-primary-soft: oklch(0.955 0.025 264);
+  --color-on-primary: var(--color-neutral-0);
+
+  --color-success: var(--color-emerald-600);
+  --color-success-soft: oklch(0.96 0.03 162);
+  --color-warning: var(--color-amber-600);
+  --color-warning-soft: oklch(0.96 0.04 78);
+  --color-danger: var(--color-rose-600);
+  --color-danger-soft: oklch(0.96 0.03 18);
+  --color-accent: var(--color-violet-600);
+  --color-accent-soft: oklch(0.96 0.03 300);
+  --color-info: var(--color-sky-600);
+  --color-info-soft: oklch(0.96 0.03 235);
+
+  /* ── tipografia ── */
+  --font-sans: "Inter var", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.5;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.02em;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+
+  /* ── forma, espaço, movimento, profundidade ── */
+  --radius-sm: 0.3125rem;
+  --radius-md: 0.4375rem;
+  --radius-lg: 0.625rem;
+  --spacing-gutter: 1.5rem;
+  --duration-fast: 120ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.03);
+  --shadow-pop: 0 4px 12px oklch(0 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.04);
+}
+
+/* ── tema escuro ──
+   Redefine SÓ o nível semântico. Zero mudança nos componentes.
+   Duas entradas: preferência do sistema e escolha explícita. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: var(--color-neutral-950);
+    --color-surface: var(--color-neutral-900);
+    --color-surface-hover: var(--color-neutral-850);
+    --color-fg: var(--color-neutral-100);
+    --color-muted: var(--color-neutral-400);
+    --color-border: var(--color-neutral-850);
+    --color-border-strong: var(--color-neutral-800);
+
+    --color-primary: var(--color-indigo-500);
+    --color-primary-hover: var(--color-indigo-400);
+    --color-primary-soft: var(--color-indigo-950);
+    --color-on-primary: var(--color-neutral-0);
+
+    --color-success: var(--color-emerald-400);
+    --color-success-soft: var(--color-emerald-950);
+    --color-warning: var(--color-amber-400);
+    --color-warning-soft: var(--color-amber-950);
+    --color-danger: var(--color-rose-400);
+    --color-danger-soft: var(--color-rose-950);
+    --color-accent: var(--color-violet-400);
+    --color-accent-soft: var(--color-violet-950);
+    --color-info: var(--color-sky-400);
+    --color-info-soft: var(--color-sky-950);
+
+    --shadow-card: 0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px oklch(0 0 0 / 0.2);
+    --shadow-pop: 0 4px 14px oklch(0 0 0 / 0.45), 0 1px 3px oklch(0 0 0 / 0.3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: var(--color-neutral-950);
+  --color-surface: var(--color-neutral-900);
+  --color-surface-hover: var(--color-neutral-850);
+  --color-fg: var(--color-neutral-100);
+  --color-muted: var(--color-neutral-400);
+  --color-border: var(--color-neutral-850);
+  --color-border-strong: var(--color-neutral-800);
+
+  --color-primary: var(--color-indigo-500);
+  --color-primary-hover: var(--color-indigo-400);
+  --color-primary-soft: var(--color-indigo-950);
+  --color-on-primary: var(--color-neutral-0);
+
+  --color-success: var(--color-emerald-400);
+  --color-success-soft: var(--color-emerald-950);
+  --color-warning: var(--color-amber-400);
+  --color-warning-soft: var(--color-amber-950);
+  --color-danger: var(--color-rose-400);
+  --color-danger-soft: var(--color-rose-950);
+  --color-accent: var(--color-violet-400);
+  --color-accent-soft: var(--color-violet-950);
+  --color-info: var(--color-sky-400);
+  --color-info-soft: var(--color-sky-950);
+
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px oklch(0 0 0 / 0.2);
+  --shadow-pop: 0 4px 14px oklch(0 0 0 / 0.45), 0 1px 3px oklch(0 0 0 / 0.3);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+::selection {
+  background: var(--color-primary-soft);
+}
