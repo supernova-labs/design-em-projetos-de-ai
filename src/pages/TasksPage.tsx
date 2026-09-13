@@ -1,21 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { FilterBar, FilterChip } from '@/components/ui/filter-bar'
-import { Pagination } from '@/components/ui/pagination'
-import { EmptyState, ErrorState } from '@/components/ui/states'
 import { RecordHeader } from '@/components/record-header'
 import { TaskGroup } from '@/components/task-list'
-import { Tabs } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { FilterBar, FilterChip } from '@/components/ui/filter-bar'
 import { Icon } from '@/components/ui/icon'
+import { Pagination } from '@/components/ui/pagination'
+import { EmptyState, ErrorState } from '@/components/ui/states'
+import { Tabs } from '@/components/ui/tabs'
 import { UpdateList, UpdateListSkeleton } from '@/components/update-list'
-import {
-  fetchTasks,
-  fetchUpdates,
-  record,
-  type Priority,
-  type Task,
-  type Update,
-} from '@/data'
+import { fetchTasks, fetchUpdates, type Priority, record, type Task, type Update } from '@/data'
 
 const PER_PAGE = 10
 
@@ -36,7 +29,11 @@ function TasksSkeleton() {
     >
       <div className="h-11 border-b border-border" />
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 border-b border-border px-3 py-3 last:border-0">
+        <div
+          // biome-ignore lint/suspicious/noArrayIndexKey: esqueleto fixo, sem reordenação
+          key={i}
+          className="flex items-center gap-3 border-b border-border px-3 py-3 last:border-0"
+        >
           <div className="size-[18px] animate-pulse rounded-[5px] bg-border" />
           <div
             className="h-3.5 flex-1 animate-pulse rounded bg-border"
@@ -167,10 +164,7 @@ export function TasksPage({ simulate }: { simulate: 'ok' | 'empty' | 'error' }) 
             }}
             chips={
               priority && (
-                <FilterChip
-                  label={`prioridade: ${priority}`}
-                  onRemove={() => setPriority(null)}
-                />
+                <FilterChip label={`prioridade: ${priority}`} onRemove={() => setPriority(null)} />
               )
             }
           >
@@ -221,13 +215,7 @@ export function TasksPage({ simulate }: { simulate: 'ok' | 'empty' | 'error' }) 
           ) : (
             <>
               {groups.map(([name, items]) => (
-                <TaskGroup
-                  key={name}
-                  name={name}
-                  tasks={items}
-                  onToggle={toggle}
-                  onAdd={add}
-                />
+                <TaskGroup key={name} name={name} tasks={items} onToggle={toggle} onAdd={add} />
               ))}
               <Pagination
                 page={page}

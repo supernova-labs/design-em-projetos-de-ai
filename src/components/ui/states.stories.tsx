@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { EmptyState, ErrorState } from './states'
 import { Button } from './button'
+import { EmptyState, ErrorState } from './states'
 
 const meta = { title: 'Estados/Vazio e erro' } satisfies Meta
 export default meta

@@ -9,6 +9,7 @@ export function Property({ label, children }: { label: string; children: ReactNo
   return (
     <div className="min-w-0 space-y-1.5">
       <button
+        type="button"
         className="inline-flex cursor-pointer items-center gap-1 rounded px-1 -mx-1 font-medium text-primary
           transition-colors hover:bg-surface-hover
           focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"

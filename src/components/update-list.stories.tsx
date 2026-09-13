@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { UpdateList, UpdateListSkeleton } from './update-list'
 import { updates } from '@/data'
+import { UpdateList, UpdateListSkeleton } from './update-list'
 
-const meta = { title: 'Listas/Atualizações', component: UpdateList } satisfies Meta<typeof UpdateList>
+const meta = { title: 'Listas/Atualizações', component: UpdateList } satisfies Meta<
+  typeof UpdateList
+>
 export default meta
 type Story = StoryObj<typeof meta>
 

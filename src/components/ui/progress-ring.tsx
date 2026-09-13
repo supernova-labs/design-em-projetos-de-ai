@@ -10,7 +10,15 @@ export function ProgressRing({ done, total }: { done: number; total: number }) {
         {done}/{total}
       </span>
       <svg viewBox="0 0 20 20" className="size-[18px] -rotate-90" aria-hidden="true">
-        <circle cx="10" cy="10" r={r} fill="none" stroke="currentColor" strokeWidth="2" opacity="0.25" />
+        <circle
+          cx="10"
+          cy="10"
+          r={r}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          opacity="0.25"
+        />
         <circle
           cx="10"
           cy="10"

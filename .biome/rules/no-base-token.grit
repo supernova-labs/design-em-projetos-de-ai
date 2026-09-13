@@ -1,0 +1,10 @@
+language js
+
+// CAMADA 5 · nível base da paleta usado direto no componente.
+jsx_attribute(name=`className`, value=$v) where {
+  $v <: r".*\b(?:bg|text|border)-(?:gray|blue|red|green|amber|slate|zinc|neutral)-[0-9]{2,3}\b.*",
+  register_diagnostic(
+    span = $v,
+    message = "Esse é o nível base da paleta. Use o token semântico: bg-bg, text-fg, bg-primary…"
+  )
+}

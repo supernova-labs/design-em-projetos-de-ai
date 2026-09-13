@@ -32,5 +32,10 @@ export const WithIcon: Story = {
 /** Botão só com ícone precisa de nome acessível — sem isso o axe falha, e deve falhar. */
 export const IconOnly: Story = {
   name: 'Só ícone',
-  args: { children: <Icon name="more" />, 'aria-label': 'Mais ações', size: 'sm', variant: 'ghost' },
+  args: {
+    children: <Icon name="more" />,
+    'aria-label': 'Mais ações',
+    size: 'sm',
+    variant: 'ghost',
+  },
 }

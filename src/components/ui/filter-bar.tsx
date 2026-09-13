@@ -44,17 +44,12 @@ export function FilterBar({
 }
 
 /** Filtro ativo. Sempre removível — filtro que não se tira vira armadilha. */
-export function FilterChip({
-  label,
-  onRemove,
-}: {
-  label: string
-  onRemove: () => void
-}) {
+export function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-sm bg-primary-soft py-1 pl-2.5 pr-1 text-label font-medium text-primary">
       {label}
       <button
+        type="button"
         onClick={onRemove}
         aria-label={`Remover filtro ${label}`}
         className="cursor-pointer rounded-sm p-0.5 transition-colors hover:bg-surface

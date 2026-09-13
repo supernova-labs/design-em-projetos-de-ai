@@ -6,35 +6,33 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint src .storybook eslint.config.js vite.config.ts vitest.config.ts",
+    "lint": "biome check src .storybook",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:ui": "vitest run --project=storybook"
+    "test:ui": "vitest run --project=storybook",
+    "format": "biome check --write src .storybook"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "@biomejs/biome": "2.5.13",
     "@storybook/addon-a11y": "^10.6.0",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/addon-mcp": "^10.6.0",
     "@storybook/addon-vitest": "^10.6.0",
     "@storybook/react-vite": "^10.6.0",
-    "@stylistic/eslint-plugin": "^5.10.0",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/browser": "^5.0.0",
     "@vitest/browser-playwright": "^5.0.0",
-    "eslint": "^9.17.0",
     "playwright": "^1.63.0",
     "storybook": "^10.6.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0",
-    "typescript-eslint": "^8.19.0",
     "vite": "^6.0.0",
     "vitest": "^5.0.0"
   }

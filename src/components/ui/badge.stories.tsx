@@ -23,11 +23,17 @@ export const AllTones: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
       <Badge>neutro</Badge>
-      <Badge tone="success" dot>sucesso</Badge>
-      <Badge tone="warning" dot>atenção</Badge>
+      <Badge tone="success" dot>
+        sucesso
+      </Badge>
+      <Badge tone="warning" dot>
+        atenção
+      </Badge>
       <Badge tone="danger">perigo</Badge>
       <Badge tone="info">informação</Badge>
-      <Badge tone="accent" dot>destaque</Badge>
+      <Badge tone="accent" dot>
+        destaque
+      </Badge>
     </div>
   ),
 }

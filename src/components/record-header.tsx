@@ -1,8 +1,8 @@
-import { Badge } from './ui/badge'
-import { Avatar } from './ui/avatar'
-import { Property } from './ui/property'
-import { Icon } from './ui/icon'
 import type { Record } from '@/data'
+import { Avatar } from './ui/avatar'
+import { Badge } from './ui/badge'
+import { Icon } from './ui/icon'
+import { Property } from './ui/property'
 
 // Classes completas, nunca interpoladas: o Tailwind varre o código como texto,
 // então `text-${x}` não gera classe nenhuma.
@@ -18,7 +18,10 @@ export function RecordHeader({ record }: { record: Record }) {
     <header className="overflow-hidden rounded-lg border border-border bg-surface shadow-card">
       <div className="space-y-1 px-5 pt-5 pb-4">
         <h1 className="text-title font-semibold">{record.title}</h1>
-        <button className="cursor-pointer rounded px-1 -mx-1 text-muted transition-colors hover:bg-surface-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary">
+        <button
+          type="button"
+          className="cursor-pointer rounded px-1 -mx-1 text-muted transition-colors hover:bg-surface-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
+        >
           {record.description || 'Adicionar descrição…'}
         </button>
       </div>

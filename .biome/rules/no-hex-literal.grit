@@ -1,0 +1,21 @@
+language js
+
+// CAMADA 5 · cor crua num literal que é só a cor: style={{ color: '#ff0000' }}.
+// Casar a string inteira é o que evita o falso positivo: '#1327 · título do card'
+// não é uma cor, e não é acusado.
+or {
+  `'$s'` as $lit where {
+    $s <: r"#[0-9a-fA-F]{3,8}",
+    register_diagnostic(
+      span = $lit,
+      message = "Cor em hex não entra no componente. Use um token semântico do theme.css (bg-primary, text-fg…)."
+    )
+  },
+  `"$s"` as $lit where {
+    $s <: r"#[0-9a-fA-F]{3,8}",
+    register_diagnostic(
+      span = $lit,
+      message = "Cor em hex não entra no componente. Use um token semântico do theme.css (bg-primary, text-fg…)."
+    )
+  }
+}

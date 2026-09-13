@@ -1,18 +1,44 @@
-import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { TaskGroup } from './task-list'
+import { useState } from 'react'
 import type { Task } from '@/data'
+import { TaskGroup } from './task-list'
 
 const base: Task = {
-  id: 'T-1', group: 'Open Notebook', title: '#1327 · O SSE do chat não tem keepalive, e cancelar não faz nada',
-  priority: 'alta', scope: 'interna', comments: 0, context: 'conta',
-  dueInDays: -1, assignee: 'Luis Novo', done: false,
+  id: 'T-1',
+  group: 'Open Notebook',
+  title: '#1327 · O SSE do chat não tem keepalive, e cancelar não faz nada',
+  priority: 'alta',
+  scope: 'interna',
+  comments: 0,
+  context: 'conta',
+  dueInDays: -1,
+  assignee: 'Luis Novo',
+  done: false,
 }
 
 const tasks: Task[] = [
   base,
-  { ...base, id: 'T-2', title: '#1264 · A aba de insights desiste depois de 4 minutos', priority: 'alta', scope: 'externa', comments: 1, context: 'menção', dueInDays: 0, assignee: 'Gyovana Prado' },
-  { ...base, id: 'T-3', title: '#1290 · Senha com caractere fora de latin-1 nunca autentica', priority: 'baixa', scope: 'externa', dueInDays: 8, assignee: 'Renato Ames', done: true },
+  {
+    ...base,
+    id: 'T-2',
+    title: '#1264 · A aba de insights desiste depois de 4 minutos',
+    priority: 'alta',
+    scope: 'externa',
+    comments: 1,
+    context: 'menção',
+    dueInDays: 0,
+    assignee: 'Gyovana Prado',
+  },
+  {
+    ...base,
+    id: 'T-3',
+    title: '#1290 · Senha com caractere fora de latin-1 nunca autentica',
+    priority: 'baixa',
+    scope: 'externa',
+    dueInDays: 8,
+    assignee: 'Renato Ames',
+    done: true,
+  },
 ]
 
 const meta = {

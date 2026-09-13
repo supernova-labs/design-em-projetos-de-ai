@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { RecordHeader } from './record-header'
 import { record } from '@/data'
+import { RecordHeader } from './record-header'
 
 const meta = {
   title: 'Padrões/Cabeçalho de registro',

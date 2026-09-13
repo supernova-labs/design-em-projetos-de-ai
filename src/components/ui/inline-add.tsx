@@ -24,6 +24,7 @@ export function InlineAdd({
   return (
     <div className="flex items-center gap-2 border-t border-border px-3 py-2">
       <input
+        // biome-ignore lint/a11y/noAutofocus: o campo só existe depois de o usuário pedir para adicionar
         autoFocus
         value={value}
         onChange={(e) => setValue(e.target.value)}

@@ -21,6 +21,7 @@ export function Tabs({
         const on = t.id === active
         return (
           <button
+            type="button"
             key={t.id}
             role="tab"
             aria-selected={on}

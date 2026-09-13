@@ -16,7 +16,8 @@ Componentes em `src/components/`: as peças genéricas em `ui/`, as do produto a
 ## Comandos
 
 - `bun dev` — sobe a aplicação
-- `bun lint` — falha em cor crua, token do nível base, `div` clicável, e estilo (sem `;`, aspas simples)
+- `bun lint` — Biome: falha em cor crua, token do nível base, `div` clicável e formatação
+- `bun run format` — aplica as correções automáticas do Biome
 - `bun run build` — typecheck + build
 - `bun storybook` — o catálogo de componentes, com o MCP em `localhost:6006/mcp`
 - `bun run test:ui` — roda toda story num navegador de verdade, com axe

@@ -1,6 +1,6 @@
+import { formatUpdateDate, type Update, type UpdateKind } from '@/data'
 import { Avatar } from './ui/avatar'
 import { Badge } from './ui/badge'
-import { formatUpdateDate, type Update, type UpdateKind } from '@/data'
 
 const kindTone = {
   release: 'accent',
@@ -51,6 +51,7 @@ export function UpdateListSkeleton() {
       aria-label="Carregando atualizações"
     >
       {Array.from({ length: 4 }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: esqueleto fixo, sem reordenação
         <div key={i} className="flex gap-3 border-b border-border px-3 py-3 last:border-0">
           <div className="size-6 shrink-0 animate-pulse rounded-full bg-border" />
           <div className="flex-1 space-y-2">

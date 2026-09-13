@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { TasksPage } from '@/pages/TasksPage'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { TasksPage } from '@/pages/TasksPage'
 
 type Sim = 'ok' | 'empty' | 'error'
 
@@ -49,9 +49,7 @@ export default function App() {
                 {label}
               </Button>
             ))}
-            <span className="ml-auto text-muted">
-              recarregue a página para ver o carregando
-            </span>
+            <span className="ml-auto text-muted">recarregue a página para ver o carregando</span>
           </div>
         </aside>
       </main>

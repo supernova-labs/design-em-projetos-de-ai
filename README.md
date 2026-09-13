@@ -30,14 +30,14 @@ bun run dev                        # http://localhost:5173
 | 2 · Componentes | `src/components/` | as peças genéricas em `ui/`, as do produto ao lado; código no repositório, sem dependência de UI |
 | 3 · Padrão de tela | `.claude/skills/page-tasks/` | o `example.tsx` é um symlink para a tela real, não uma cópia |
 | 4 · Contexto | `AGENTS.md` | 60 linhas que apontam, sem repetir o que já está nas outras camadas |
-| 5 · Verificação | `eslint.config.js`, `.storybook/`, `vitest.config.ts`, `.mcp.json` | as quatro peças: lint, story + axe, MCP e screenshot |
+| 5 · Verificação | `biome.json`, `.biome/rules/`, `.storybook/`, `vitest.config.ts`, `.mcp.json` | as quatro peças: lint, story + axe, MCP e screenshot |
 
 A tela de referência é `src/pages/TasksPage.tsx`.
 
 ## Ver funcionando
 
 ```bash
-bun lint            # vocabulário: cor crua, classe errada, div clicável
+bun lint            # vocabulário: cor crua, classe errada, div clicável (Biome)
 bun run test:ui     # 27 stories num Chromium real, com axe
 bun storybook       # o catálogo, com MCP em localhost:6006/mcp
 bun run build       # typecheck + build

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { Icon, type IconName } from './ui/icon'
+import { formatDue, type Task } from '@/data'
+import { Avatar } from './ui/avatar'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { Checkbox } from './ui/checkbox'
-import { Avatar } from './ui/avatar'
-import { ProgressRing } from './ui/progress-ring'
+import { Icon, type IconName } from './ui/icon'
 import { InlineAdd } from './ui/inline-add'
-import { formatDue, type Task } from '@/data'
+import { ProgressRing } from './ui/progress-ring'
 
 const priorityTone = { alta: 'danger', média: 'warning', baixa: 'success' } as const
 const scopeTone = { externa: 'warning', interna: 'info' } as const
@@ -88,6 +88,7 @@ export function TaskGroup({
     <section className="group/g overflow-hidden rounded-lg border border-border bg-surface shadow-card">
       <header className="flex items-center gap-2 border-b border-border px-3 py-2.5">
         <button
+          type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-label={open ? `Recolher ${name}` : `Expandir ${name}`}
@@ -133,6 +134,7 @@ export function TaskGroup({
             />
           ) : (
             <button
+              type="button"
               onClick={() => setAdding(true)}
               className="flex w-full cursor-pointer items-center gap-2 border-t border-border px-3 py-2.5 text-muted
                 transition-colors hover:bg-surface-hover hover:text-fg

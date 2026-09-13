@@ -27,14 +27,10 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /** Botão. Nunca use `div` com onClick — foco e teclado vêm de graça aqui. */
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  className = '',
-  ...props
-}: Props) {
+export function Button({ variant = 'primary', size = 'md', className = '', ...props }: Props) {
   return (
     <button
+      type={props.type ?? 'button'}
       className={`inline-flex cursor-pointer select-none items-center justify-center rounded-md
         text-body font-medium whitespace-nowrap
         transition-all duration-100 ease-out

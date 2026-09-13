@@ -505,28 +505,35 @@ Só o screenshot pegaria. A análise completa está em [`experiment/agents-md/`]
 
 **1. Regra vira lint, não instrução.** "Evite cores fora da paleta" num documento é sugestão. No lint é lei:
 
-```js
-// eslint.config.js (trecho)
-"no-restricted-syntax": ["error",
-  {
-    // cor crua em hex — só dentro de className e style
-    selector: ":matches(JSXAttribute[name.name='className'], JSXAttribute[name.name='style']) Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
-    message: "Cor em hex não entra no componente. Use um token semântico do theme.css.",
-  },
-  {
-    // classe do nível base do token, direto no componente
-    selector: "Literal[value=/\\b(bg|text|border)-(gray|blue|red|slate|zinc|neutral)-[0-9]{2,3}\\b/]",
-    message: "Esse é o nível base da paleta. Use o token semântico: bg-bg, text-fg, bg-primary…",
-  },
-  {
-    // div clicável
-    selector: "JSXOpeningElement[name.name='div'] > JSXAttribute[name.name='onClick']",
-    message: "div não é botão. Use <Button> — foco e teclado vêm junto.",
-  },
-]
+```jsonc
+// biome.json — o lint e o formatador num binário só
+{
+  "plugins": [
+    "./.biome/rules/no-hex-color.grit",
+    "./.biome/rules/no-hex-literal.grit",
+    "./.biome/rules/no-base-token.grit"
+  ],
+  "linter": { "rules": { "recommended": true,
+    // div clicável: o Biome já traz as duas regras prontas
+    "a11y": { "noStaticElementInteractions": "error", "useKeyWithClickEvents": "error" } } }
+}
 ```
 
-> **Escope a regra, ou ela vira ruído.** A primeira versão da regra de hex olhava qualquer literal — e acusou `#1327`, um número de issue num título, como se fosse cor. Regra com falso positivo é regra que o time desliga na semana seguinte.
+As regras de vocabulário do produto são plugins em GritQL, um arquivo por regra:
+
+```
+// .biome/rules/no-base-token.grit
+language js
+
+jsx_attribute(name=`className`, value=$v) where {
+  $v <: r".*\b(?:bg|text|border)-(?:gray|blue|red|slate|zinc|neutral)-[0-9]{2,3}\b.*",
+  register_diagnostic(span = $v, message = "Esse é o nível base da paleta. Use o token semântico.")
+}
+```
+
+> **Dois detalhes que custaram tempo.** O regex do GritQL casa o valor inteiro, não um trecho: sem os `.*` nas pontas, a regra não dispara. E `or` no topo do arquivo descarta os ramos seguintes, então cada regra mora no próprio arquivo.
+
+> **Escope a regra, ou ela vira ruído.** A primeira versão da regra de hex olhava qualquer literal — e acusou `#1327`, um número de issue num título, como se fosse cor. Regra com falso positivo é regra que o time desliga na semana seguinte. Hoje o escopo é a *forma*: a cor crua só é acusada quando o literal é só a cor, ou quando está num valor arbitrário do Tailwind.
 
 **2. Acessibilidade vira teste vermelho.** Toda story roda num Chromium real, com o axe:
 

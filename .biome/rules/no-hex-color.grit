@@ -1,0 +1,11 @@
+language js
+
+// CAMADA 5 · cor crua num valor arbitrário do Tailwind: className="text-[#ff0000]".
+// O regex do GritQL casa a string inteira, por isso os `.*` nas pontas.
+jsx_attribute(name=`className`, value=$v) where {
+  $v <: r".*\[#[0-9a-fA-F]{3,8}\].*",
+  register_diagnostic(
+    span = $v,
+    message = "Cor em hex não entra no componente. Use um token semântico do theme.css (bg-primary, text-fg…)."
+  )
+}
