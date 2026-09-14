@@ -52,6 +52,8 @@ As referências que sustentam o [playbook](playbook.md), agrupadas por tema.
 - Style Dictionary v4 — suporte a DTCG: https://styledictionary.com/info/dtcg/
 - Vois — *Tailwind v4 design tokens*: https://www.vois.design/blog/tailwind-v4-design-tokens-semantic-system
 - Google Labs — DESIGN.md (alpha): https://github.com/google-labs-code/design.md
+- Google Labs — DESIGN.md, a especificação: https://github.com/google-labs-code/design.md/blob/main/docs/spec.md
+- Stencil — Web Components com wrappers para React, Vue e Angular: https://stenciljs.com/
 
 **Skills**
 

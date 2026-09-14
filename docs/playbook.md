@@ -17,9 +17,9 @@ Como a gente cuida de interface quando quem escreve o código é um agente.
    4. [Contexto](#34-camada-4-contexto)
    5. [Verificação](#35-camada-5-verificação)
 4. [Casos de uso](#4-casos-de-uso)
-5. [Implantação](#5-implantação)
+5. [Implantação em projeto existente](#5-implantação-em-projeto-existente)
 6. [Antipadrões](#6-antipadrões)
-7. [Limitações e questões em aberto](#7-limitações-e-questões-em-aberto)
+7. [DESIGN.md: a alternativa que seguimos estudando](#7-designmd-a-alternativa-que-seguimos-estudando)
 8. [Referências](#8-referências)
 
 ---
@@ -43,7 +43,7 @@ Você corrige. Amanhã, outra tela, os mesmos erros.
 
 Responder a uma pergunta: **de onde vem o entendimento de design, e como ele chega até o agente?**
 
-O padrão define o que precisa existir no repositório para que um agente produza interface consistente com o produto — sem uma pessoa revisando o mesmo erro toda semana — e como implantar isso em um projeto novo ou herdado.
+O padrão define o que precisa existir no repositório para que um agente produza interface consistente com o produto — sem uma pessoa revisando o mesmo erro toda semana — e como implantar isso num projeto que já existe.
 
 ---
 
@@ -57,11 +57,18 @@ Estas são as informações que o agente precisa ter, na ordem em que uma depend
 
 ```mermaid
 flowchart LR
-    L1["<b>1 · Tokens</b><br/>quais cores, fontes,<br/>espaços<br/><i>theme.css</i>"]
-    L2["<b>2 · Componentes</b><br/>que peças<br/>existem<br/><i>components/ui/</i>"]
-    L3["<b>3 · Padrões de página</b><br/>como é uma<br/>tela daqui<br/><i>skill + exemplo real</i>"]
-    L4["<b>4 · Contexto</b><br/>onde está<br/>tudo<br/><i>AGENTS.md</i>"]
-    L5["<b>5 · Verificação</b><br/>acertei?<br/>&nbsp;<br/><i>lint · axe · screenshot</i>"]
+    subgraph V["o vocabulário — o que o produto é"]
+        direction LR
+        L1["<b>1 · Tokens</b><br/>quais cores, fontes,<br/>espaços<br/><i>theme.css</i>"]
+        L2["<b>2 · Componentes</b><br/>que peças<br/>existem<br/><i>components/</i>"]
+        L3["<b>3 · Padrões de página</b><br/>como é uma<br/>tela daqui<br/><i>skill + exemplo real</i>"]
+    end
+    subgraph M["o mapa"]
+        L4["<b>4 · Contexto</b><br/>onde está<br/>tudo<br/><i>AGENTS.md</i>"]
+    end
+    subgraph E["o espelho"]
+        L5["<b>5 · Verificação</b><br/>acertei?<br/>&nbsp;<br/><i>lint · axe · screenshot</i>"]
+    end
     L1 --> L2 --> L3 --> L4 --> L5
     classDef voc fill:#eef0ff,stroke:#5b5bd6,color:#1a1a2e
     classDef map fill:#fff6e5,stroke:#d98b1e,color:#1a1a2e
@@ -71,15 +78,21 @@ flowchart LR
     class L5 mir
 ```
 
-Chamamos cada uma de **camada** porque uma apoia a outra: sem cores definidas não há componentes consistentes; sem componentes não há padrão de tela; e nada disso vale se o agente não souber onde está, ou não conseguir se corrigir.
-
-- **1, 2 e 3 são o vocabulário** — o que o produto é.
-- **4 é o mapa** — onde cada coisa está.
-- **5 é o espelho** — e é a que quase todo time esquece.
+Chamamos cada uma de **camada** porque uma apoia a outra: sem cores definidas não há componentes consistentes; sem componentes não há padrão de tela; e nada disso vale se o agente não souber onde está, ou não conseguir se corrigir. A quinta é a que quase todo time esquece.
 
 Nada disso é sobre gosto. É sobre o agente **enxergar decisões que já foram tomadas.**
 
-**As cinco camadas não dependem de stack.** Os arquivos citados daqui em diante são a resposta para React + Tailwind + shadcn, que é o que a gente usa. Em outra stack, muda o arquivo — o `theme.css` vira um tema do MUI, a skill aponta para outro exemplo — e a pergunta continua a mesma. O que se instala é o princípio; a tecnologia é o veículo.
+**As cinco camadas são princípios, não uma stack.** Os arquivos citados daqui em diante são a resposta para React + Tailwind + shadcn, que é o que a gente usa. A pergunta de cada camada não muda; o que muda é o arquivo que a responde:
+
+| Camada | A pergunta | React + Tailwind | Outra stack |
+| --- | --- | --- | --- |
+| 1 | Quais cores, fontes e espaços? | `theme.css` com `@theme` | Variáveis CSS em `:root` · tema do MUI · tokens do Stencil |
+| 2 | Que peças já existem? | `components/ui/` + shadcn | Qualquer catálogo de componentes do projeto |
+| 3 | Como é uma tela daqui? | Skill + symlink para a tela real | O mesmo, apontando para o exemplo da sua stack |
+| 4 | Onde está cada coisa? | `AGENTS.md` | `AGENTS.md` — é convenção de agente, não de framework |
+| 5 | Acertei? | Biome + Vitest + axe + screenshot | O linter, o test runner e o motor de acessibilidade que você já usa |
+
+O que se instala é o princípio; a tecnologia é o veículo. Se ao ler este documento você trocar cada arquivo pelo equivalente da sua stack e o texto continuar fazendo sentido, é porque está funcionando como deveria.
 
 ---
 
@@ -150,7 +163,7 @@ No componente, só o nível semântico: `bg-surface`, `text-fg`, `bg-primary`. N
 
 Falta uma cor? Não se usa a paleta base direto no componente. Cria-se um token semântico com nome de função, apontando para a base: `--color-warning: var(--color-amber-600)`. O componente usa `text-warning`; o amber continua existindo, mas só no nível base.
 
-Tailwind v4 com `@theme` é o alvo porque a config vira CSS, e o agente lê CSS variable com confiança. Se o cliente tem Figma com variables, elas saem de lá uma vez, por script (Figma exporta DTCG, o Style Dictionary converte, e o `:root` que ele gera vira `@theme`). Não à mão. [Rodamos a conversão](../experiment/style-dictionary/): os nomes já saem no formato do Tailwind e as referências entre níveis sobrevivem.
+Tailwind v4 com `@theme` é o alvo porque a config vira CSS, e o agente lê CSS variable com confiança. Se o cliente já tem os valores em outra ferramenta, eles saem de lá uma vez, por script — nunca copiados à mão. [Rodamos essa conversão](../experiment/style-dictionary/): os nomes já saem no formato do Tailwind e as referências entre níveis sobrevivem.
 
 </details>
 
@@ -160,7 +173,7 @@ Tailwind v4 com `@theme` é o alvo porque a config vira CSS, e o agente lê CSS 
 
 ### 3.2 Camada 2: Componentes
 
-**A dor:** já existe um `FilterChip` no projeto. O agente escreve outro, com nome diferente, porque não sabia que existia.
+**A dor:** já existe um `Dropdown` no projeto. O agente escreve outro, com nome diferente, porque não sabia que existia.
 
 Isso acontece mesmo com componente bem escrito, em Tailwind puro. O agente não varre o repositório inteiro antes de cada tela: ele escreve o que o pedido sugere. Se nada o obriga a olhar, ele não olha.
 
@@ -189,8 +202,8 @@ flowchart LR
 
    ```
    src/components/
-     ui/                ← peças genéricas, sem saber do produto: button, badge, dialog
-     task-row.tsx       ← peças do produto, compostas com as de ui/
+     ui/                ← peças genéricas, sem saber do produto: button, badge, states
+     task-list.tsx      ← peças do produto, compostas com as de ui/
      record-header.tsx
    ```
 
@@ -199,8 +212,8 @@ flowchart LR
 2. **Cada componente diz para que serve**, num comentário em cima. É o que o agente lê quando abre a pasta — e é o que chega até ele pelo MCP, sem abrir nada:
 
    ```tsx
-   /** Filtro ativo. Sempre removível — filtro que não se tira vira armadilha. */
-   export function FilterChip({ label, onRemove }: …) { … }
+   /** Vazio. Sempre com a ação primária — tela vazia sem saída é beco. */
+   export function EmptyState({ title, action }: …) { … }
 
    /** Erro. Nunca uma tela em branco: diz o que houve e oferece tentar de novo. */
    export function ErrorState({ onRetry }: …) { … }
@@ -256,7 +269,7 @@ Componentes que o cliente reusa entre produtos viram um **registry privado**, e 
 
 </details>
 
-> **Teste da camada:** peça algo que já existe com outro nome — *"um chip de filtro removível"*. Se o agente usou o `FilterChip` em vez de escrever um, a camada está funcionando. Com o shadcn, peça *"um seletor de data"* e veja se ele consulta o catálogo. [Rodamos](../experiment/shadcn-cli/): ele compôs `calendar` + `popover` + `button`.
+> **Teste da camada:** peça algo que já existe com outro nome — *"um menu de ações"*. Se o agente usou o `Dropdown` em vez de escrever um, a camada está funcionando. Com o shadcn, peça *"um seletor de data"* e veja se ele consulta o catálogo. [Rodamos](../experiment/shadcn-cli/): ele compôs `calendar` + `popover` + `button`.
 
 ---
 
@@ -404,7 +417,7 @@ flowchart LR
     class L5 mir
 ```
 
-E precisa ser **curto**. Arquivo de 150 linhas o agente lê o começo e ignora o resto. O do projeto de referência tem 61 linhas — e são basicamente essas quatro setas.
+E precisa ser **curto**. Arquivo de 150 linhas o agente lê o começo e ignora o resto. O do projeto de referência tem 64 linhas — e são basicamente essas quatro setas.
 
 <details>
 <summary><b>Na prática</b> — o <code>AGENTS.md</code> do projeto de referência, inteiro</summary>
@@ -413,20 +426,29 @@ E precisa ser **curto**. Arquivo de 150 linhas o agente lê o começo e ignora o
 # UI — como trabalhar neste repo
 
 ## Stack
+
 React 19 · Vite · Tailwind v4 (tokens em `src/styles/theme.css`) · TypeScript.
 Componentes em `src/components/`: as peças genéricas em `ui/`, as do produto ao lado. Padrão shadcn, código nosso, no repo.
 
 ## Onde está o quê
+
 - **Tokens**: `src/styles/theme.css`. Componente usa **só o nível semântico**.
 - **Componentes genéricos**: `src/components/ui/` — botão, badge, estados, sem saber do produto.
 - **Componentes do produto**: `src/components/` — `RecordHeader`, `TaskGroup`, `UpdateList`. Consulte as duas pastas antes de criar qualquer coisa.
-- **Padrões de página**: `.claude/skills/page-*/`. **Antes de criar uma tela, leia a skill.**
-- **Tela de referência**: `src/pages/TasksPage.tsx` — o exemplo real do padrão `page-tasks`.
+- **Padrões de página**: `.claude/skills/page-*/`. **Antes de criar uma tela, leia a skill do padrão.**
+- **Tela de referência**: `src/pages/TasksPage.tsx` — é o exemplo real do padrão `page-tasks`.
 
 ## Comandos
-- `bun dev` · `bun lint` · `bun run build` · `bun storybook` · `bun run test:ui`
+
+- `bun dev` — sobe a aplicação
+- `bun lint` — Biome: falha em cor crua, token do nível base, `div` clicável e formatação
+- `bun run format` — aplica as correções automáticas do Biome
+- `bun run build` — typecheck + build
+- `bun storybook` — o catálogo de componentes, com o MCP em `localhost:6006/mcp`
+- `bun run test:ui` — roda toda story num navegador de verdade, com axe
 
 ## Os cinco erros mais comuns aqui
+
 1. Cor em hex ou classe `bg-gray-*` em vez do token semântico. O lint pega.
 2. Criar componente que já existe em `components/` com outro nome — leia as duas pastas antes.
 3. Tela sem os quatro estados (carregando, vazio, vazio-por-filtro, erro).
@@ -434,24 +456,37 @@ Componentes em `src/components/`: as peças genéricas em `ui/`, as do produto a
 5. `div` com `onClick`. Botão é `<Button>`, link é `<a>`.
 
 ## Tema claro e escuro
-Nenhum componente conhece o tema. Se você está escrevendo `dark:` numa classe,
-parou no lugar errado: a diferença mora só no `theme.css`.
+
+Nenhum componente conhece o tema. Se você está escrevendo `dark:` numa classe, parou no
+lugar errado: a diferença entre os temas mora só no `theme.css`, redefinindo o nível
+semântico. Componente usa `bg-surface` e funciona nos dois.
 
 ## Consulte antes de criar
-Com o Storybook rodando, o MCP responde o que existe:
+
+Com o Storybook rodando (`bun storybook`), o MCP responde o que existe:
+
 - `docs-list` — todos os componentes, com a regra de uso de cada um
 - `docs-show` — as props de um componente
 - `test-run` — roda as stories e devolve as violações de acessibilidade
 
+**Consulte antes de escrever um componente novo.** Quase sempre já existe.
+
 ## Antes de dizer "pronto"
-1. `bun lint` passa.
+
+1. `bun lint` passa. *(pega cor crua, classe errada, `div` clicável)*
 2. `bun run build` passa.
-3. `bun run test:ui` passa.
+3. `bun run test:ui` passa. *(pega componente que não renderiza ou que o axe reprova)*
 4. Se é uma tela: os quatro estados existem e a anatomia bate com a skill.
-5. **Tire um screenshot em 1280px (desktop) e em 375px (celular)** e compare com o exemplo da skill.
+5. **Tire um screenshot em 1280px (desktop) e em 375px (celular)** e compare com o exemplo da skill. Diga o que
+   bateu e o que não bateu com a referência — não só o que viu. *(pega o que as três
+   anteriores não pegam: título que atravessa a linha, elemento que sobrepõe outro,
+   coluna que some errado)*
 6. Troque o tema. Nada some, nada perde contraste.
 
 Se algum falhar, não está pronto.
+
+O passo 5 existe por um motivo concreto: o lint e o build passam num layout quebrado.
+Ver `experiment/agents-md/`.
 ```
 
 Repare no que **não** está aí: nenhum token, nenhum padrão de tela, nenhuma explicação de design. Só o mapa e as regras.
@@ -479,7 +514,7 @@ flowchart LR
     class D mir
 ```
 
-#### Por que são quatro peças, e não uma
+#### Por que são três peças, e não uma
 
 É tentador parar no lint, que é a mais barata. Mas cada peça pega uma classe diferente de erro:
 
@@ -488,7 +523,8 @@ flowchart LR
 | **Lint** | vocabulário: cor crua, classe errada, `div` clicável | composição |
 | **Story + axe** | o componente renderiza e é acessível | como ele se comporta na página |
 | **Screenshot comparado** | layout: o que vaza, sobrepõe, some | intenção |
-| **Regressão visual** | mudança não intencional entre versões | a primeira versão já errada |
+
+Há uma quarta, a regressão visual entre versões, que pega mudança não intencional — e não pega a primeira versão já errada. Entra só no estágio 3, porque em PR de agente o pixel-diff gera mais ruído do que sinal.
 
 **axe** é o motor de acessibilidade da Deque, o mesmo por trás da aba Accessibility do Lighthouse. Ele examina a página renderizada e devolve as violações das regras WCAG: botão só com ícone sem `aria-label`, contraste insuficiente, campo sem rótulo, elemento clicável que o teclado não alcança. Aqui ele roda em toda story, e uma violação falha o teste.
 
@@ -501,7 +537,7 @@ A gente aprendeu isso apanhando. No experimento da camada 4, a versão sem conte
 Só o screenshot pegaria. A análise completa está em [`experiment/agents-md/`](../experiment/agents-md/).
 
 <details>
-<summary><b>Na prática</b> — as quatro peças, no projeto de referência</summary>
+<summary><b>Na prática</b> — as três peças, no projeto de referência</summary>
 
 **1. Regra vira lint, não instrução.** "Evite cores fora da paleta" num documento é sugestão. No lint é lei:
 
@@ -548,17 +584,17 @@ plugins: [storybookTest({ configDir: ".storybook" })],
 test: { browser: { enabled: true, headless: true, provider: playwright(), instances: [{ browser: "chromium" }] } }
 ```
 
-**3. O agente consulta em vez de adivinhar.** Storybook exposto por MCP: ele pergunta quais componentes existem, quais props aceitam, e roda as stories para receber as violações. Os comentários JSDoc de cada componente chegam junto — então a regra de uso escrita no código vira contexto.
+**3. E olha o resultado.** O agente tira o próprio screenshot pelo Playwright MCP, em 1280px (desktop) e em 375px (celular), e compara com o exemplo da skill. A instrução está no `AGENTS.md`; o servidor, no `.mcp.json`:
 
 ```json
 // .mcp.json
 { "mcpServers": {
-  "storybook":  { "type": "http", "url": "http://localhost:6006/mcp" },
-  "playwright": { "command": "bunx", "args": ["@playwright/mcp@latest", "--headless"] }
+  "playwright": { "command": "bunx", "args": ["@playwright/mcp@latest", "--headless"] },
+  "storybook":  { "type": "http", "url": "http://localhost:6006/mcp" }
 } }
 ```
 
-**4. E olha o resultado.** Playwright MCP registrado, e a instrução no `AGENTS.md`: screenshot em 1280px (desktop) e em 375px (celular), comparado com o exemplo da skill.
+O segundo servidor é o do Storybook: com ele o agente pergunta quais componentes existem e quais props aceitam, em vez de abrir a pasta. É consulta, não verificação — serve à camada 2.
 
 </details>
 
@@ -573,6 +609,32 @@ O CI é a rede de segurança. O loop é o que evita cair nela.
 ## 4. Casos de uso
 
 Duas situações que aparecem em quase todo projeto, e o que muda nelas com as camadas no lugar.
+
+#### Uma tela nova, do pedido à produção
+
+A pergunta que organiza esta seção não é qual ferramenta usar para propor a tela. É **onde a proposta nasce** — fora do repositório, ou a partir dele.
+
+Quando a tela não bate com o desenho, é lido como falha do agente. Não é: são duas fontes sem contrato. O agente traduz o desenho na hora, e traduzir é interpretar. O contrato que resolve é um só: **o código é a fonte da verdade; a proposta é uma proposta.** Se for o contrário, o passo de implementar vira *"copie o desenho"* e as cinco camadas deixam de valer.
+
+| # | Passo | Proposta em canvas externo | Proposta a partir do repositório |
+| --- | --- | --- | --- |
+| 1 | Alguém propõe a tela | Figma — um artefato que vive fora do código | Claude Design, Codex — a ferramenta lê o repositório e propõe já em código |
+| 2 | O agente recebe o pedido | o desenho, pelo MCP da ferramenta | a demanda em texto |
+| 3 | **Lê o repositório** — tokens, componentes e o padrão de tela | `AGENTS.md` | `AGENTS.md` — e já leu no passo 1 |
+| 4 | Traduz a proposta para o vocabulário do produto | o código manda | — *já nasceu no vocabulário* |
+| 5 | Implementa a tela | camadas 1 a 3 | camadas 1 a 3 |
+| 6 | **Verifica antes de dizer "pronto"** — lint, story com axe, screenshot | camada 5 | camada 5 |
+| 7 | Uma pessoa aprova | uma pessoa | uma pessoa |
+| 8 | Reconcilia proposta e código | engano no desenho corrige o canvas; decisão nova entra no sistema | — *a proposta já é o código* |
+| 9 | Produção | PR | PR |
+
+O miolo é idêntico nas duas: ler o repositório, implementar, verificar, aprovar. É ali que o resultado se decide, e é ali que as cinco camadas agem.
+
+**O canvas externo** compra um artefato para discutir antes de existir código — alinhar pessoas, explorar variações, decidir junto. Quem tem desenhista no time e um canvas vivo tem essa vantagem, e ela é real. O preço são os passos 4 e 8: manter duas representações em acordo. Com Code Connect, cada componente do canvas aponta para o arquivo real no repositório, e o agente recebe código em vez de imagem — é a diferença entre *"faça uma tabela parecida com esta imagem"* e *"use a `DataTable`"*. Fica caro só quando ninguém reconcilia: o canvas vira ficção e cada tela nova herda a divergência.
+
+**A proposta a partir do repositório** não produz artefato paralelo: a ferramenta lê as camadas 1 a 3 e devolve código já no vocabulário do produto. Não há o que traduzir nem reconciliar. É o que a gente usa aqui na Supernova, onde não há ninguém de design — e não substitui a conversa que um canvas permite; troca o artefato de discussão por algo executável.
+
+Se o seu Figma está abandonado, não se ressuscita: os tokens saem dele uma vez, ele vira histórico, e você passa para a coluna da direita conscientemente.
 
 #### O protótipo que não serve para nada
 
@@ -600,66 +662,33 @@ flowchart TB
 | Camada | O que ela dá ao protótipo |
 | --- | --- |
 | [1 · Tokens](#31-camada-1-tokens) | as cores e espaçamentos certos, sem escolher nada |
-| [2 · Componentes](#32-camada-2-componentes) | as mesmas peças que o dev vai usar — instaláveis por um comando, se há registry |
+| [2 · Componentes](#32-camada-2-componentes) | as mesmas peças que o dev vai usar |
 | [3 · Padrões de página](#33-camada-3-padrões-de-página) | a anatomia da tela, com os estados que o protótipo esqueceria |
 
 O protótipo deixa de ser uma referência a interpretar e vira o ponto de partida. E o que não existe no sistema aparece cedo, na validação da ideia, não no meio da construção.
 
 Um limite honesto: protótipo não passa por lint nem CI, e nem deve. Ele herda o vocabulário, não o rigor.
 
-#### O Figma que não bate com a tela
-
-Planeja-se em cima do Figma, manda-se desenvolver, e a tela não bate com o desenho. É lido como falha do agente. Não é: são **duas fontes sem contrato**. O agente traduz o Figma na hora, e traduzir é interpretar.
-
-```mermaid
-flowchart TB
-    subgraph antes["Duas fontes"]
-        direction LR
-        F1["Figma"] -.->|"imagem para interpretar"| A1(("agente")) --> T1["tela ≠ desenho"]
-    end
-    subgraph depois["O código é a fonte"]
-        direction LR
-        F2["Figma"] -.->|"Code Connect"| C2["componentes no repo"] --> A2(("agente")) --> T2["tela = componente"]
-    end
-    antes ~~~ depois
-    classDef no fill:#fdeeee,stroke:#c94a4a,color:#1a1a2e
-    classDef ok fill:#e9f8ef,stroke:#2f9e5f,color:#1a1a2e
-    class T1 no
-    class T2 ok
-```
-
-**O que o padrão muda:** o código vira a fonte, e o Figma documenta.
-
-| Camada | O que ela resolve |
-| --- | --- |
-| [1 · Tokens](#31-camada-1-tokens) | os valores saem do Figma uma vez, por script, e passam a viver no `theme.css` |
-| [2 · Componentes](#32-camada-2-componentes) | com Code Connect, cada componente do canvas aponta para o arquivo real no repo — o agente recebe código, não imagem |
-| [4 · Contexto](#34-camada-4-contexto) | o `AGENTS.md` diz que a referência é o componente, não o desenho |
-
-É a diferença entre *"faça uma tabela parecida com esta imagem"* e *"use a `DataTable`"*. Se o Figma está abandonado, não se ressuscita: os tokens saem dele uma vez e ele vira histórico.
-
 ---
 
-## 5. Implantação
+## 5. Implantação em projeto existente
+
+Num projeto novo, as cinco camadas entram desde o primeiro commit e não há o que implantar. Esta seção é para o outro caso: **o front que já existe**, com telas em produção, cores espalhadas e nenhum dos cinco artefatos no lugar.
 
 Três estágios. Não se pula estágio.
 
 ```mermaid
-timeline
-    title Do zero ao sistema com dono
-    Estágio 1 : inventário do que existe
-                          : theme.css com o que é intencional
-                          : lint em warn + AGENTS.md
-                          : o experimento com e sem contexto
-    Estágio 2 : story + axe por componente
-                           : Storybook por MCP
-                           : skills dos 3 padrões mais frequentes
-                           : self-check no AGENTS.md
-    Estágio 3 : registry com preset
-                         : as skills de padrão de tela versionadas
-                         : tokens DTCG ↔ Figma
-                         : regressão visual no CI
-                         : um dono nomeado
+flowchart LR
+    E1["<b>Estágio 1</b><br/>codificar o que já existe<br/>&nbsp;<br/>inventário<br/>theme.css com o que é intencional<br/>lint em warn + AGENTS.md<br/>o experimento com e sem contexto"]
+    E2["<b>Estágio 2</b><br/>fechar o loop<br/>&nbsp;<br/>story + axe por componente<br/>Storybook por MCP<br/>skills dos padrões mais frequentes<br/>self-check no AGENTS.md"]
+    E3["<b>Estágio 3</b><br/>sistema com dono<br/>&nbsp;<br/>componentes distribuídos entre produtos<br/>skills versionadas<br/>regressão visual no CI<br/>um dono nomeado"]
+    E1 --> E2 --> E3
+    classDef a fill:#eef0ff,stroke:#5b5bd6,color:#1a1a2e
+    classDef b fill:#fff6e5,stroke:#d98b1e,color:#1a1a2e
+    classDef c fill:#e9f8ef,stroke:#2f9e5f,color:#1a1a2e
+    class E1 a
+    class E2 b
+    class E3 c
 ```
 
 #### Estágio 1 — Codificar o que já existe
@@ -686,7 +715,7 @@ grep -rhoE '\btext-(xs|sm|base|lg|xl|[0-9]xl|\[[^]]+\])' src | sort | uniq -c | 
 
 </details>
 
-**Rodamos esse teste em 09/09/2026.** A versão sem contexto mandou rodar `npm` num projeto que usa `bun`, esqueceu uma coluna, repetiu o autor em avatar e por extenso, e trouxe o bug de truncamento da camada 5. A versão com contexto acertou o comando, seguiu a anatomia da referência e saiu 43 linhas menor. **As duas passaram no lint e no build** — o que separou foi estrutura, não vocabulário.
+O passo 4 é o [experimento da camada 4](../experiment/agents-md/), rodado em 09/09/2026: as duas versões passaram no lint e no build, e o que separou foi estrutura, não vocabulário.
 
 **O que não se faz aqui:** migrar telas antigas, criar componente novo, instalar Storybook, escrever skill. Isso é estágio 2.
 
@@ -698,20 +727,34 @@ O agente passa a verificar o próprio trabalho. A review humana deixa de ser *"i
 
 Só faz sentido com mais de um produto compartilhando identidade, ou horizonte longo. E **um dono nomeado**: design system sem dono morre em meses.
 
-#### A régua
+#### Quando existe mais de um front
 
-Oito itens, inspirados no Agent-Ready Index, que auditou 37 design systems públicos em setembro de 2026 — 19 tiraram zero:
+Tudo acima assume **um repositório de front**. Backoffice, portal do cliente, app interno — cada um com seu `theme.css` e seu catálogo — e a camada 1 se multiplica em vez de resolver: três arquivos de token, três definições de primária, três jeitos de fazer um botão.
 
-| # | Item | Fecha no |
-| --- | --- | --- |
-| 1 | Tokens semânticos, sem hex nas classes, lint barrando | estágio 1 |
-| 2 | `AGENTS.md` curto, com self-check | estágio 1 |
-| 3 | O experimento mostra que o contexto chega | estágio 1 |
-| 4 | Componentes no repo, instaláveis por CLI | estágio 2 |
-| 5 | Skills de padrão de tela, com exemplo real | estágio 2 |
-| 6 | Story + axe por componente, no CI | estágio 2 |
-| 7 | Storybook por MCP; o agente tira e compara o próprio screenshot | estágio 2 |
-| 8 | Um dono nomeado | estágio 3 — e decide se os outros sobrevivem |
+Duas perguntas decidem o caminho:
+
+```mermaid
+flowchart LR
+    Q1{"os fronts compartilham<br/>identidade visual?"}
+    Q2{"mesma stack?"}
+    S["cada front com o seu<br/><i>repetir estrutura não é duplicação</i>"]
+    P["componentes num<br/><b>pacote versionado</b><br/><i>cada front instala</i>"]
+    W["<b>Web Components</b><br/>uma fonte, wrappers para<br/>React, Vue e Angular<br/><i>Stencil</i>"]
+    Q1 -->|"não"| S
+    Q1 -->|"sim"| Q2
+    Q2 -->|"sim"| P
+    Q2 -->|"não"| W
+    classDef ok fill:#e9f8ef,stroke:#2f9e5f,color:#1a1a2e
+    classDef cost fill:#fff6e5,stroke:#d98b1e,color:#1a1a2e
+    class S ok
+    class P,W cost
+```
+
+**O que muda com um pacote.** Os componentes deixam de ser lidos como código-fonte e passam a ser importados: o agente lê os tipos do pacote em vez de vasculhar arquivos, atualizar vira subir versão em vez de copiar arquivo, e quem não tem acesso ao repositório ainda consegue consumir. As camadas 1 e 2 mudam de endereço; as camadas 3, 4 e 5 continuam em cada repositório, porque padrão de tela e verificação são de *cada produto*.
+
+**O que isso custa.** Versionamento, changelog, política de quebra e alguém publicando. É o estágio 3 com outro nome — não comece por aqui.
+
+> Um exemplo dessa forma, com quatro marcas saindo de uma fonte só: Web Components em [Stencil](https://stenciljs.com/), tokens gerados por pipeline e um pacote por produto. Vale como referência de arquitetura, não de ponto de partida.
 
 ---
 
@@ -730,15 +773,36 @@ Oito itens, inspirados no Agent-Ready Index, que auditou 37 design systems públ
 
 ---
 
-## 7. Limitações e questões em aberto
+## 7. DESIGN.md: a alternativa que seguimos estudando
 
-Três frentes em que o campo ainda se move — a gente acompanha, mas não apostou:
+O Google Labs publicou o [`DESIGN.md`](https://github.com/google-labs-code/design.md), um formato aberto para descrever um design system em **um arquivo só**, que qualquer agente lê. É cabeçalho YAML com os tokens em valor exato, mais um corpo em markdown com a razão de cada escolha. Cobre visão geral, cores, tipografia, layout, elevação, formas, componentes e *do's and don'ts*.
 
-- **Regressão visual em PR de agente.** Pixel-diff gera ruído; os fornecedores estão migrando para classificar a diferença por intenção. Não há vencedor ainda.
-- **Um arquivo só para identidade visual.** O Google Labs propôs o [`DESIGN.md`](https://github.com/google-labs-code/design.md), um formato para descrever paleta, tipografia e tom ao agente. Não usamos: está em alpha e duplica o que tokens + `AGENTS.md` já cobrem. Observar, não adotar.
-- **Quanto contexto é o ideal.** No benchmark da Indeed, JSON via MCP gastou 80% menos tokens que markdown, com mais acurácia. Mas o MCP do Storybook está em preview, e o toolset de docs só existe nos frameworks que geram o manifesto de componentes (React, Vue e Angular com Vite, por enquanto).
+**Como se produz.** Não existe comando que gere o arquivo a partir do código. Escreve-se com o agente, a partir do que já existe, e o CLI cuida do resto:
 
-**O que já foi exercitado de verdade:** as cinco camadas, o shadcn CLI do zero e em projeto existente, o lint, as stories com axe num navegador real, o MCP do Storybook, o experimento com e sem contexto, e o loop de screenshot pelo agente — tudo no [projeto de referência](../README.md). **O que ainda segue a documentação, não a nossa experiência:** a regressão visual, que só entra no estágio 3.
+```bash
+npx @google/design.md spec    # a especificação, para colar no prompt do agente
+npx @google/design.md lint    # valida a estrutura do arquivo
+npx @google/design.md export  # tokens → Tailwind v3/v4, W3C DTCG
+npx @google/design.md diff    # o que mudou entre duas versões
+```
+
+**O que ele muda em cada camada:**
+
+| Camada | Efeito | Por quê |
+| --- | --- | --- |
+| 1 · Tokens | **Substitui a fonte** | Passa a ser onde se escreve cor, tipografia, espaço, elevação e forma. O `theme.css` não desaparece — deixa de ser escrito à mão e passa a ser gerado dele, via `export` ou Style Dictionary. |
+| 2 · Componentes | **Absorve em parte** | A seção de componentes documenta variantes e uso, que é o que hoje se escreveria em prosa. Não substitui o código nem um catálogo rodando. |
+| 3 · Padrões de página | **Não cobre** | A spec trata de token e componente, não de layout de página. A skill continua, apontando para uma tela real. |
+| 4 · Contexto | **Complementa** | O `AGENTS.md` diz onde as coisas estão e quais comandos rodar. O `DESIGN.md` vira mais um lugar para onde ele aponta. |
+| 5 · Verificação | **Não cobre** | O `lint` do CLI valida a estrutura do markdown, não o seu código. As regras de lint e o axe seguem iguais. |
+
+**Onde ele ganha.** É um arquivo: sem site para hospedar, sem credencial, sem esteira de publicação. Isso resolve um caso concreto — dar vocabulário a quem precisa do sistema mas **não tem acesso ao código**, como quem monta protótipo fora do time de engenharia. Um Storybook publicado como site estático resolve o mesmo caso e mais o CI, mas custa uma esteira; o arquivo custa um commit.
+
+**Onde ele perde.** Está em alpha — spec, schema e CLI seguem mudando. Descreve os componentes, não os executa, então não serve à camada 5. E, escrito à mão, diverge do código sem ninguém notar; só deixa de ser risco se for **gerado** a partir dos tokens, e não o contrário.
+
+**Um atrito a decidir antes de adotar.** A seção de *do's and don'ts* da spec ocupa o mesmo espaço das regras que hoje vivem no `AGENTS.md` e neste documento. Escolha um dos dois lugares — manter os dois recria exatamente a divergência que o formato deveria eliminar.
+
+**Nossa posição hoje:** observar. Reescreve a primeira camada, encosta na segunda e não toca nas outras três. Vale um experimento em quem já tem tokens; não vale reescrever o que funciona.
 
 ---
 
